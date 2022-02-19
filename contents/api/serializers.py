@@ -23,3 +23,8 @@ class MovieSerializer(serializers.Serializer):
         if len(value) < 3:
             raise serializers.ValidationError("Name is too short!")
         return value
+    
+    def validate(self, data):
+        if data['name'] == data['description']:
+            raise serializers.ValidationError("Name and Description should be different!")
+        return data
