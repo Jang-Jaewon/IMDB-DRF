@@ -3,25 +3,16 @@ from rest_framework import serializers
 from contents.models import Movie
 
 
-def description_length(value):
-    if len(value) < 10:
-        raise serializers.ValidationError("Description is too short!")
-
-class MovieSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    name = serializers.CharField()
-    description = serializers.CharField(validators=[description_length])
-    active = serializers.BooleanField()
+class MovieSerializer(serializers.ModelSerializer):
+    len_name = serializers.SerializerMethodField()
     
-    def create(self, validated_data):
-        return Movie.objects.create(**validated_data)
-    
-    def update(self, instance, validated_data):
-        instance.name        = validated_data.get('name', instance.name)
-        instance.description = validated_data.get('description', instance.description)
-        instance.active      = validated_data.get('active', instance.active)
-        instance.save()
-        return instance
+    class Meta:
+        model  = Movie
+        fields = "__all__"
+        
+    def get_len_name(self, object):
+        length = len(object.name)
+        return length  
     
     def validate_name(self, value):
         if len(value) < 3:
