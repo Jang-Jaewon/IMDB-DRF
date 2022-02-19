@@ -4,47 +4,89 @@ from rest_framework            import status
 from rest_framework.response   import Response
 from rest_framework.views      import APIView
 
-from contents.models import Movie
-from .serializers    import MovieSerializer
+from contents.models import StreamPlatform, Content
+from .serializers    import StreamPlatformSerializer, ContentSerializer
 
 
-class MovieListAPIView(APIView):
+class StreamPlatformAPIView(APIView):
     
     def get(self, request):
-        movies     = Movie.objects.all()
-        serializer = MovieSerializer(movies, many=True)
+        platforms  = StreamPlatform.objects.all()
+        serializer = StreamPlatformSerializer(platforms, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
-        serializer = MovieSerializer(data=request.data)
+        serializer = StreamPlatformSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MovieDetailAPIView(APIView):
+class StreamPlatformDetailAPIView(APIView):
     
     def get_object(self, pk):
         try:
-            return Movie.objects.get(pk=pk)
-        except Movie.DoesNotExist:
+            return StreamPlatform.objects.get(pk=pk)
+        except StreamPlatform.DoesNotExist:
             raise Http404
     
     def get(self, request, pk):
-        movie      = self.get_object(pk)
-        serializer = MovieSerializer(movie)
+        platform   = self.get_object(pk)
+        serializer = StreamPlatformSerializer(platform)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def put(self, request, pk):
-        movie      = self.get_object(pk)
-        serializer = MovieSerializer(movie, request.data)
+        platform   = self.get_object(pk)
+        serializer = StreamPlatformSerializer(platform, request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
     def delete(self, request, pk):
-        movie = self.get_object(pk)
-        movie.delete()
+        platform = self.get_object(pk)
+        platform.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    
+class ContentListAPIView(APIView):
+    
+    def get(self, request):
+        contents   = Content.objects.all()
+        serializer = ContentSerializer(contents, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request):
+        serializer = ContentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ContentDetailAPIView(APIView):
+    
+    def get_object(self, pk):
+        try:
+            return Content.objects.get(pk=pk)
+        except Content.DoesNotExist:
+            raise Http404
+    
+    def get(self, request, pk):
+        content    = self.get_object(pk)
+        serializer = ContentSerializer(content)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def put(self, request, pk):
+        content    = self.get_object(pk)
+        serializer = ContentSerializer(content, request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request, pk):
+        content = self.get_object(pk)
+        content.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
