@@ -10,7 +10,7 @@ class ContentSerializer(serializers.ModelSerializer):
         fields = "__all__"
         
         
-class StreamPlatformSerializer(serializers.ModelSerializer):
+class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer):
     contentlist = ContentSerializer(many=True, read_only=True)
     
     class Meta:

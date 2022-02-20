@@ -12,7 +12,7 @@ class StreamPlatformAPIView(APIView):
     
     def get(self, request):
         platforms  = StreamPlatform.objects.all()
-        serializer = StreamPlatformSerializer(platforms, many=True)
+        serializer = StreamPlatformSerializer(platforms, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
@@ -33,7 +33,7 @@ class StreamPlatformDetailAPIView(APIView):
     
     def get(self, request, pk):
         platform   = self.get_object(pk)
-        serializer = StreamPlatformSerializer(platform)
+        serializer = StreamPlatformSerializer(platform, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def put(self, request, pk):

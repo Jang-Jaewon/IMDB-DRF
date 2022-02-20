@@ -4,8 +4,8 @@ from .views import StreamPlatformAPIView, StreamPlatformDetailAPIView, ContentLi
 
 
 urlpatterns = [
-    path('stream/', StreamPlatformAPIView.as_view(), name='stream'),
-    path('stream/<int:pk>', StreamPlatformDetailAPIView.as_view(), name='stream-detail'),
+    path('stream/', StreamPlatformAPIView.as_view(), name='streamplatform'),
+    path('stream/<int:pk>', StreamPlatformDetailAPIView.as_view(), name='streamplatform-detail'),
     path('list/', ContentListAPIView.as_view(), name='content-list'),
     path('<int:pk>/', ContentDetailAPIView.as_view(), name='content-detail'),
 ]
