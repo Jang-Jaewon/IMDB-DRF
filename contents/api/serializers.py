@@ -1,9 +1,17 @@
 from rest_framework import serializers
 
-from contents.models import StreamPlatform, Content
+from contents.models import StreamPlatform, Content, Review
 
 
+class ReviewSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Review
+        fields = "__all__"
+
+    
 class ContentSerializer(serializers.ModelSerializer):
+    reviews = ReviewSerializer(many=True, read_only=True)
     
     class Meta:
         model  = Content
