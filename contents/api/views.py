@@ -5,6 +5,7 @@ from rest_framework.response   import Response
 from rest_framework.views      import APIView
 from rest_framework            import generics
 from rest_framework            import viewsets
+from rest_framework.exceptions import ValidationError
 
 from contents.models import StreamPlatform, Content, Review
 from .serializers    import StreamPlatformSerializer, ContentSerializer, ReviewSerializer
@@ -13,10 +14,19 @@ from .serializers    import StreamPlatformSerializer, ContentSerializer, ReviewS
 class ReviewCreate(generics.CreateAPIView):
     serializer_class = ReviewSerializer
     
+    def get_queryset(self):
+        return Review.objects.all()
+    
     def perform_create(self, serializer):
-        pk      = self.kwargs.get('pk')
-        content = Content.objects.get(pk=pk)
-        serializer.save(content=content)
+        pk              = self.kwargs.get('pk')
+        content         = Content.objects.get(pk=pk)
+        review_user     = self.request.user
+        review_queryset = Review.objects.filter(content=content, review_user=review_user)
+        
+        if review_queryset.exists():
+            raise ValidationError('You have already reivewed this content!')
+        
+        serializer.save(content=content, review_user=review_user)
         
 
 class ReviewList(generics.ListAPIView):
