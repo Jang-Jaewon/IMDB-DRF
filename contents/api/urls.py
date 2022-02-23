@@ -1,11 +1,15 @@
-from django.urls        import path
+from django.urls        import path, include
+
+from rest_framework.routers import DefaultRouter
 
 from . import views
 
 
+router = DefaultRouter()
+router.register('stream', views.StreamPlatformViewset, basename='streamplatform')
+
 urlpatterns = [
-    path('stream/', views.StreamPlatformAPIView.as_view(), name='streamplatform'),
-    path('stream/<int:pk>/', views.StreamPlatformDetailAPIView.as_view(), name='streamplatform-detail'),
+    path('', include(router.urls)),
     path('list/', views.ContentListAPIView.as_view(), name='content-list'),
     path('<int:pk>/', views.ContentDetailAPIView.as_view(), name='content-detail'),
     path('stream/<int:pk>/review-create/', views.ReviewCreate.as_view(), name='review-create'),
