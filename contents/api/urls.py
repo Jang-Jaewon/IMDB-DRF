@@ -6,7 +6,7 @@ from . import views
 
 
 router = DefaultRouter()
-router.register('stream', views.StreamPlatformViewset, basename='streamplatform')
+router.register('stream', views.StreamPlatformModelViewset, basename='streamplatform')
 
 urlpatterns = [
     path('', include(router.urls)),
