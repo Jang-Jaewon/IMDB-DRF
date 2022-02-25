@@ -11,6 +11,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 
 from contents.models import StreamPlatform, Content, Review
 from .serializers    import StreamPlatformSerializer, ContentSerializer, ReviewSerializer
+from contents.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly
 
 
 class ReviewCreate(generics.CreateAPIView):
@@ -43,7 +44,8 @@ class ReviewList(generics.ListAPIView):
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset         = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [ReviewUserOrReadOnly]
+    # permission_classes = [AdminOrReadOnly]
     
 
 class StreamPlatformModelViewset(viewsets.ModelViewSet):
