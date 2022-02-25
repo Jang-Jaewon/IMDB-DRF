@@ -1,11 +1,13 @@
 from django.http      import Http404
 
-from rest_framework            import status
-from rest_framework.response   import Response
-from rest_framework.views      import APIView
-from rest_framework            import generics
-from rest_framework            import viewsets
-from rest_framework.exceptions import ValidationError
+from rest_framework             import status
+from rest_framework.response    import Response
+from rest_framework.views       import APIView
+from rest_framework             import generics
+from rest_framework             import viewsets
+from rest_framework.exceptions  import ValidationError
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+
 
 from contents.models import StreamPlatform, Content, Review
 from .serializers    import StreamPlatformSerializer, ContentSerializer, ReviewSerializer
@@ -30,8 +32,9 @@ class ReviewCreate(generics.CreateAPIView):
         
 
 class ReviewList(generics.ListAPIView):
-    serializer_class = ReviewSerializer
-    
+    serializer_class   = ReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_queryset(self):
         pk = self.kwargs['pk']
         return Review.objects.filter(content=pk)
@@ -40,6 +43,7 @@ class ReviewList(generics.ListAPIView):
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset         = Review.objects.all()
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
     
 
 class StreamPlatformModelViewset(viewsets.ModelViewSet):
