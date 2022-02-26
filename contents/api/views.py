@@ -29,6 +29,13 @@ class ReviewCreate(generics.CreateAPIView):
         if review_queryset.exists():
             raise ValidationError('You have already reivewed this content!')
         
+        if content.number_rating == 0:
+            content.avg_rating = serializer.validated_data['rating']
+        else:
+            content.avg_rating = (content.avg_rating + serializer.validated_data['rating']) / 2
+        content.number_rating = content.number_rating + 1
+        content.save()
+        
         serializer.save(content=content, review_user=review_user)
         
 
