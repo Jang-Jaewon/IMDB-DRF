@@ -1,0 +1,32 @@
+from rest_framework.decorators       import api_view
+from rest_framework.response         import Response
+from rest_framework.authtoken.models import Token
+
+from users.api.serializers import RegistrationSerializer
+
+
+@api_view(['POST',])
+def registration_view(request):
+    
+    if request.method == 'POST':
+        serializer = RegistrationSerializer(data=request.data)
+        
+        data = {}
+        
+        if serializer.is_valid():
+            account = serializer.save()
+            token = Token.objects.get(user=account).key
+            
+            data['response'] = "Registration Successful!"
+            data['username'] = account.username
+            data['email']    = account.email
+            data['token']    = token
+            
+        else:
+            data = serializer.errors
+            
+        return Response(data)
+        
+        
+    
+    
