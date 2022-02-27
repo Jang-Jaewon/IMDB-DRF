@@ -11,11 +11,12 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 
 from contents.models import StreamPlatform, Content, Review
 from .serializers    import StreamPlatformSerializer, ContentSerializer, ReviewSerializer
-from contents.api.permissions import AdminOrReadOnly, ReviewUserOrReadOnly
+from contents.api.permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
 
 
 class ReviewCreate(generics.CreateAPIView):
-    serializer_class = ReviewSerializer
+    serializer_class   = ReviewSerializer
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         return Review.objects.all()
@@ -41,7 +42,6 @@ class ReviewCreate(generics.CreateAPIView):
 
 class ReviewList(generics.ListAPIView):
     serializer_class   = ReviewSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -51,16 +51,17 @@ class ReviewList(generics.ListAPIView):
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset         = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [ReviewUserOrReadOnly]
-    # permission_classes = [AdminOrReadOnly]
+    permission_classes = [IsReviewUserOrReadOnly]
     
 
 class StreamPlatformModelViewset(viewsets.ModelViewSet):
-    queryset         = StreamPlatform.objects.all()
-    serializer_class = StreamPlatformSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    queryset           = StreamPlatform.objects.all()
+    serializer_class   = StreamPlatformSerializer
     
     
 class ContentListAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
     
     def get(self, request):
         contents   = Content.objects.all()
@@ -76,6 +77,7 @@ class ContentListAPIView(APIView):
 
 
 class ContentDetailAPIView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
     
     def get_object(self, pk):
         try:
