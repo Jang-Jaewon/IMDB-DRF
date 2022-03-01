@@ -7,7 +7,7 @@ from rest_framework             import generics
 from rest_framework             import viewsets
 from rest_framework.exceptions  import ValidationError
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-
+from rest_framework.throttling  import AnonRateThrottle, UserRateThrottle
 
 from contents.models import StreamPlatform, Content, Review
 from .serializers    import StreamPlatformSerializer, ContentSerializer, ReviewSerializer
@@ -43,6 +43,7 @@ class ReviewCreate(generics.CreateAPIView):
 class ReviewList(generics.ListAPIView):
     serializer_class   = ReviewSerializer
     # permission_classes = [IsAuthenticated]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -53,6 +54,7 @@ class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset         = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsReviewUserOrReadOnly]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
     
 
 class StreamPlatformModelViewset(viewsets.ModelViewSet):
