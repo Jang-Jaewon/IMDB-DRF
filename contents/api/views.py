@@ -1,13 +1,16 @@
 from django.http      import Http404
 
-from rest_framework             import status
-from rest_framework.response    import Response
-from rest_framework.views       import APIView
-from rest_framework             import generics
-from rest_framework             import viewsets
-from rest_framework.exceptions  import ValidationError
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework.throttling  import AnonRateThrottle, UserRateThrottle, ScopedRateThrottle
+from rest_framework                import status
+from rest_framework.response       import Response
+from rest_framework.views          import APIView
+from rest_framework                import generics
+from rest_framework                import viewsets
+from rest_framework.exceptions     import ValidationError
+from rest_framework.permissions    import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.throttling     import AnonRateThrottle, UserRateThrottle, ScopedRateThrottle
+from rest_framework                import filters
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 from contents.models          import StreamPlatform, Content, Review
 from contents.api.serializers import StreamPlatformSerializer, ContentSerializer, ReviewSerializer
@@ -53,6 +56,8 @@ class ReviewList(generics.ListAPIView):
     serializer_class   = ReviewSerializer
     # permission_classes = [IsAuthenticated]
     throttle_classes   = [AnonRateThrottle, ReviewListThrotlling]
+    filter_backends    = [DjangoFilterBackend]
+    filterset_fields   = ['review_user__username', 'active']
 
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -71,6 +76,13 @@ class StreamPlatformModelViewset(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     queryset           = StreamPlatform.objects.all()
     serializer_class   = StreamPlatformSerializer
+    
+    
+class ContentSearchListView(generics.ListAPIView):
+    queryset         = Content.objects.all()
+    serializer_class = ContentSerializer
+    filter_backends  = [filters.SearchFilter]
+    search_fields    = ['title', '=platform__name']
     
     
 class ContentListAPIView(APIView):

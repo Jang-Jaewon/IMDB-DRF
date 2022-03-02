@@ -11,6 +11,7 @@ router.register('stream', views.StreamPlatformModelViewset, basename='streamplat
 urlpatterns = [
     path('', include(router.urls)),
     path('list/', views.ContentListAPIView.as_view(), name='content-list'),
+    path('list2/', views.ContentSearchListView.as_view(), name='content-list2'),
     path('<int:pk>/', views.ContentDetailAPIView.as_view(), name='content-detail'),
     path('<int:pk>/review-create/', views.ReviewCreate.as_view(), name='review-create'),
     path('<int:pk>/review/', views.ReviewList.as_view(), name='review-list'),
