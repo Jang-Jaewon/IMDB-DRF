@@ -78,11 +78,11 @@ class StreamPlatformModelViewset(viewsets.ModelViewSet):
     serializer_class   = StreamPlatformSerializer
     
     
-class ContentSearchListView(generics.ListAPIView):
+class ContentOrderingView(generics.ListAPIView):
     queryset         = Content.objects.all()
     serializer_class = ContentSerializer
-    filter_backends  = [filters.SearchFilter]
-    search_fields    = ['title', '=platform__name']
+    filter_backends  = [filters.OrderingFilter]
+    search_fields    = ['avg_rating']
     
     
 class ContentListAPIView(APIView):
