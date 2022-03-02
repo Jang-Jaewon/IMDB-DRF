@@ -15,6 +15,13 @@ from contents.api.permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
 from contents.api.throttling  import ReviewCreateThrotlling, ReviewListThrotlling
 
 
+class UserReviewList(generics.ListAPIView):
+    serializer_class   = ReviewSerializer
+    
+    def get_queryset(self):
+        username = self.request.query_params.get('username', None)
+        return Review.objects.filter(review_user__username=username)
+
 class ReviewCreate(generics.CreateAPIView):
     serializer_class   = ReviewSerializer
     permission_classes = [IsAuthenticated]
