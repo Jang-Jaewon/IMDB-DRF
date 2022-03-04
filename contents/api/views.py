@@ -82,8 +82,8 @@ class StreamPlatformModelViewset(viewsets.ModelViewSet):
 class ContentOrderingView(generics.ListAPIView):
     queryset         = Content.objects.all()
     serializer_class = ContentSerializer
-    filter_backends  = [filters.OrderingFilter]
-    search_fields    = ['avg_rating']
+    # filter_backends  = [filters.OrderingFilter]
+    # search_fields    = ['avg_rating']
     pagination_class = ContentListPagination
     
     
