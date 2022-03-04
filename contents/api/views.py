@@ -16,6 +16,7 @@ from contents.models          import StreamPlatform, Content, Review
 from contents.api.serializers import StreamPlatformSerializer, ContentSerializer, ReviewSerializer
 from contents.api.permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
 from contents.api.throttling  import ReviewCreateThrotlling, ReviewListThrotlling
+from contents.api.pagination  import ContentListPagination
 
 
 class UserReviewList(generics.ListAPIView):
@@ -83,6 +84,7 @@ class ContentOrderingView(generics.ListAPIView):
     serializer_class = ContentSerializer
     filter_backends  = [filters.OrderingFilter]
     search_fields    = ['avg_rating']
+    pagination_class = ContentListPagination
     
     
 class ContentListAPIView(APIView):
