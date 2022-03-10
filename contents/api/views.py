@@ -6,30 +6,25 @@ from rest_framework.views          import APIView
 from rest_framework                import generics
 from rest_framework                import viewsets
 from rest_framework.exceptions     import ValidationError
-from rest_framework.permissions    import IsAuthenticated, IsAuthenticatedOrReadOnly
-from rest_framework.throttling     import AnonRateThrottle, UserRateThrottle, ScopedRateThrottle
-from rest_framework                import filters
+from rest_framework.permissions    import IsAuthenticated
+from rest_framework.throttling     import AnonRateThrottle, ScopedRateThrottle
 from django_filters.rest_framework import DjangoFilterBackend
 
-
-from contents.models          import StreamPlatform, Content, Review
-from contents.api.serializers import StreamPlatformSerializer, ContentSerializer, ReviewSerializer
-from contents.api.permissions import IsAdminOrReadOnly, IsReviewUserOrReadOnly
-from contents.api.throttling  import ReviewCreateThrotlling, ReviewListThrotlling
-from contents.api.pagination  import ContentListPagination
+from contents.models import StreamPlatform, Content, Review
+from contents.api    import serializers, permissions, throttling, pagination
 
 
 class UserReviewList(generics.ListAPIView):
-    serializer_class   = ReviewSerializer
+    serializer_class   = serializers.ReviewSerializer
     
     def get_queryset(self):
         username = self.request.query_params.get('username', None)
         return Review.objects.filter(review_user__username=username)
 
 class ReviewCreate(generics.CreateAPIView):
-    serializer_class   = ReviewSerializer
+    serializer_class   = serializers.ReviewSerializer
     permission_classes = [IsAuthenticated]
-    throttle_classes   = [AnonRateThrottle, ReviewCreateThrotlling]
+    throttle_classes   = [AnonRateThrottle, throttling.ReviewCreateThrotlling]
     
     def get_queryset(self):
         return Review.objects.all()
@@ -54,9 +49,8 @@ class ReviewCreate(generics.CreateAPIView):
         
 
 class ReviewList(generics.ListAPIView):
-    serializer_class   = ReviewSerializer
-    # permission_classes = [IsAuthenticated]
-    throttle_classes   = [AnonRateThrottle, ReviewListThrotlling]
+    serializer_class   = serializers.ReviewSerializer
+    throttle_classes   = [AnonRateThrottle, throttling.ReviewListThrotlling]
     filter_backends    = [DjangoFilterBackend]
     filterset_fields   = ['review_user__username', 'active']
 
@@ -67,36 +61,29 @@ class ReviewList(generics.ListAPIView):
 
 class ReviewDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset         = Review.objects.all()
-    serializer_class = ReviewSerializer
-    permission_classes = [IsReviewUserOrReadOnly]
+    serializer_class = serializers.ReviewSerializer
+    permission_classes = [permissions.IsReviewUserOrReadOnly]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = 'review-detail'
     
 
 class StreamPlatformModelViewset(viewsets.ModelViewSet):
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [permissions.IsAdminOrReadOnly]
     queryset           = StreamPlatform.objects.all()
-    serializer_class   = StreamPlatformSerializer
-    
-    
-class ContentOrderingView(generics.ListAPIView):
-    queryset         = Content.objects.all()
-    serializer_class = ContentSerializer
-    # filter_backends  = [filters.OrderingFilter]
-    # search_fields    = ['avg_rating']
-    pagination_class = ContentListPagination
+    serializer_class   = serializers.StreamPlatformSerializer
     
     
 class ContentListAPIView(APIView):
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [permissions.IsAdminOrReadOnly]
+    pagination_class   = pagination.ContentListPagination
     
     def get(self, request):
         contents   = Content.objects.all()
-        serializer = ContentSerializer(contents, many=True)
+        serializer = serializers.ContentSerializer(contents, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
-        serializer = ContentSerializer(data=request.data)
+        serializer = serializers.ContentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -104,7 +91,7 @@ class ContentListAPIView(APIView):
 
 
 class ContentDetailAPIView(APIView):
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [permissions.IsAdminOrReadOnly]
     
     def get_object(self, pk):
         try:
@@ -114,12 +101,12 @@ class ContentDetailAPIView(APIView):
     
     def get(self, request, pk):
         content    = self.get_object(pk)
-        serializer = ContentSerializer(content)
+        serializer = serializers.ContentSerializer(content)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     def put(self, request, pk):
         content    = self.get_object(pk)
-        serializer = ContentSerializer(content, request.data)
+        serializer = serializers.ContentSerializer(content, request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

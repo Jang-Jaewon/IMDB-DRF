@@ -4,7 +4,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework                  import status
 # from rest_framework_simplejwt.tokens import RefreshToken
 
-from users.api.serializers import RegistrationSerializer
+from users.api import serializers
 
 
 @api_view(['POST',])
@@ -18,7 +18,7 @@ def logout_view(request):
 def registration_view(request):
     
     if request.method == 'POST':
-        serializer = RegistrationSerializer(data=request.data)
+        serializer = serializers.RegistrationSerializer(data=request.data)
         
         data = {}
         

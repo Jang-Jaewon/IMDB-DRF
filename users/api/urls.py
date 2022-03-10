@@ -7,10 +7,9 @@ from users.api.views import registration_view, logout_view
 
 
 urlpatterns = [
+    path('register/', registration_view, name='register'),
     path('login/', obtain_auth_token, name='login'),
     path('logout/', logout_view, name='logout'),
-    path('register/', registration_view, name='register'),
-    
     # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
