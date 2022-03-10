@@ -13,18 +13,18 @@
 ### 3. Stream Platforms
 
 - Create Element & Access List: http://127.0.0.1:8000/api/content/stream/
-- Access, Update & Destroy Individual Element: http://127.0.0.1:8000/api/content/stream/<int:streamplatform_id>/
+- Access, Update & Destroy Individual Element: http://127.0.0.1:8000/api/content/stream/<<int:streamplatform_id>>/
 
 ### 4. Watch List
 
 - Create & Access List: http://127.0.0.1:8000/api/content/
-- Access, Update & Destroy Individual Element: http://127.0.0.1:8000/api/content/<int:content_id>/
+- Access, Update & Destroy Individual Element: http://127.0.0.1:8000/api/content/<<int:content_id>>/
 
 ### 5. Reviews
 
-- Create Review For Specific Content: http://127.0.0.1:8000/api/content/<int:content_id>/reviews/create/
-- List Of All Reviews For Specific Content: http://127.0.0.1:8000/api/content/<int:content_id>/reviews/
-- Access, Update & Destroy Individual Review: http://127.0.0.1:8000/api/content/reviews/<int:review_id>/
+- Create Review For Specific Content: http://127.0.0.1:8000/api/content/<<int:content_id>>/reviews/create/
+- List Of All Reviews For Specific Content: http://127.0.0.1:8000/api/content/<<int:content_id>>/reviews/
+- Access, Update & Destroy Individual Review: http://127.0.0.1:8000/api/content/reviews/<<int:review_id>>/
 
 ### 6. User Review
 
